@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>이벤트 핸들러 과제</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 24px;
+			background: #f3f4f6;
+			color: #111827;
+		}
+
+		.wrap {
+			max-width: 720px;
+			margin: 0 auto;
+			background: #fff;
+			border-radius: 16px;
+			padding: 24px;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+		}
+
+		section {
+			padding-bottom: 20px;
+			margin-bottom: 20px;
+			border-bottom: 1px solid #e5e7eb;
+		}
+
+		section:last-child {
+			border-bottom: 0;
+			margin-bottom: 0;
+			padding-bottom: 0;
+		}
+
+		h2 {
+			margin: 0 0 12px;
+			font-size: 20px;
+		}
+
+		input,
+		button,
+		textarea {
+			font: inherit;
+		}
+
+		input {
+			width: 100%;
+			box-sizing: border-box;
+			padding: 12px 14px;
+			border: 1px solid #d1d5db;
+			border-radius: 8px;
+			margin-bottom: 12px;
+		}
+
+		button {
+			border: 0;
+			border-radius: 8px;
+			padding: 12px 18px;
+			cursor: pointer;
+			color: #fff;
+			background: #3b82f6;
+		}
+
+		.green {
+			background: #22c55e;
+		}
+
+		.output {
+			margin-top: 12px;
+			padding: 12px 14px;
+			border-radius: 8px;
+			background: #111827;
+			color: #a3e635;
+			min-height: 24px;
+			white-space: pre-wrap;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<!-- 1번은 버튼을 눌렀을 때 어떤 일이 일어나는지 보여주는 영역입니다. -->
+		<section>
+			<h2>1. 클릭 이벤트 테스트</h2>
+			<button id="clickButton" class="green" type="button">클릭하세요!</button>
+			<div id="clickResult" class="output">버튼을 클릭하면 메시지가 표시됩니다.</div>
+		</section>
+
+		<!-- 2번은 글자를 입력하는 즉시 반응하는 영역입니다. -->
+		<section>
+			<h2>2. 실시간 입력 감지</h2>
+			<input id="typingInput" type="text" placeholder="여기에 타이핑 해보세요" />
+			<div id="typingResult" class="output">콘솔을 확인하거나 여기에 출력됨</div>
+		</section>
+
+		<!-- 3번은 이름과 이메일을 한 번에 보내는 폼입니다. -->
+		<section>
+			<h2>3. 폼 제출 (FormData)</h2>
+			<form id="sampleForm">
+				<input id="nameInput" name="name" type="text" placeholder="이름" />
+				<input id="emailInput" name="email" type="email" placeholder="이메일" />
+				<button type="submit">데이터 제출</button>
+			</form>
+			<div id="formResult" class="output">제출 결과가 여기에 표시됩니다.</div>
+		</section>
+	</div>
+
+	<script>
+		// HTML에서 만든 요소들을 JavaScript에서 사용할 수 있도록 가져옵니다.
+		const clickButton = document.getElementById('clickButton');
+		const clickResult = document.getElementById('clickResult');
+		const typingInput = document.getElementById('typingInput');
+		const typingResult = document.getElementById('typingResult');
+		const sampleForm = document.getElementById('sampleForm');
+		const formResult = document.getElementById('formResult');
+
+		// 버튼을 몇 번 눌렀는지 세기 위한 변수입니다.
+		let clickCount = 0;
+
+		// 버튼을 클릭할 때마다 실행되는 이벤트입니다.
+		clickButton.addEventListener('click', () => {
+			// 클릭할 때마다 숫자를 1씩 늘립니다.
+			clickCount += 1;
+			// 화면에 보여줄 문장을 만듭니다.
+			const message = `버튼 클릭 횟수: ${clickCount}`;
+			// 결과 박스에 글자를 보여줍니다.
+			clickResult.textContent = message;
+			// 브라우저 개발자 도구의 콘솔에도 같은 내용을 남깁니다.
+			console.log(message);
+		});
+
+		// 입력창에 글자를 칠 때마다 실행되는 이벤트입니다.
+		typingInput.addEventListener('input', (event) => {
+			// 사용자가 지금 입력한 값을 가져옵니다.
+			const value = event.target.value;
+			// 현재 입력 내용을 보기 좋게 문장으로 만듭니다.
+			const message = `입력 중인 내용: ${value}`;
+			// 아래 출력 박스에 실시간으로 보여줍니다.
+			typingResult.textContent = message;
+			// 콘솔에도 출력합니다.
+			console.log(message);
+		});
+
+		// 폼의 제출 버튼을 눌렀을 때 실행되는 이벤트입니다.
+		sampleForm.addEventListener('submit', (event) => {
+			// form은 원래 제출하면 새로고침이 되므로, 그 동작을 막습니다.
+			event.preventDefault();
+
+			// FormData는 폼 안의 입력값을 모아주는 도구입니다.
+			const formData = new FormData(sampleForm);
+			// FormData를 일반 객체로 바꿔서 다루기 쉽게 만듭니다.
+			const data = Object.fromEntries(formData.entries());
+			// 화면에 보기 좋게 표시할 문장을 만듭니다.
+			const message = `제출된 값: ${JSON.stringify(data, null, 2)}`;
+
+			// 제출 결과를 화면에 표시합니다.
+			formResult.textContent = message;
+			// 콘솔에도 제출된 데이터를 남깁니다.
+			console.log('폼 제출됨', data);
+		});
+	</script>
+</body>
+</html>
